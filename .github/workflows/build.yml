@@ -19,3 +19,4 @@ jobs:
         with:
           branch: gh-pages
           publish-dir: ./_site
+          github_token: ${{ secrets.GITHUB_TOKEN }}
