@@ -16,19 +16,20 @@ html {
   }
 }
 
-@media (min-width: 1000px) {
-  html {
-    font-size: 125%;
-  }
-}
-
 body {
   margin: 0;
   padding-inline: 1em;
   font-family: Lora, Georgia, serif;
+  font-size: 110%;
   line-height: 1.4;
   color: var(--text-color);
   background-color: var(--background-color);
+}
+
+@media (min-width: 1000px) {
+  body {
+    font-size: 125%;
+  }
 }
 
 #page {
