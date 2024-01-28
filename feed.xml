@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://šime.eu/">
-  <title>Šime’s blog.</title>
+  <title>Šime’s blog</title>
   <subtitle>I’m interested in HTML, CSS, and making the web less annoying</subtitle>
   <link href="https://xn--ime-zza.eu/feed.xml" rel="self"/>
   <link href="https://šime.eu/"/>
