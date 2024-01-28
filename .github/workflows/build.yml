@@ -1,0 +1,25 @@
+name: Eleventy Build and Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build Eleventy Site
+        uses: eleventy/eleventy-action@v3
+        with:
+          command: build
+          working-directory: .
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          # Note that the `branch` property should not be changed.
+          branch: gh-pages
+          publish-dir: ./_site
