@@ -1,0 +1,8 @@
+---
+layout: layout.html
+---
+
+<h1>{{ title }}</h1>
+<p><time datetime="{{ page.date | htmlDateString }}">{{ page.date | readableDate }}</time></p>
+{{ content | safe }}
+<p><a href="https://mastodon.social/@simevidas/{{ mastodonId }}">Reply on Mastodon</a></p>
