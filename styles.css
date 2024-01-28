@@ -1,0 +1,64 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  --text-color: #333;
+  --background-color: white;
+  --link-color: blue;
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    --text-color: white;
+    --background-color: #333;
+    --link-color: yellow;
+  }
+}
+
+@media (min-width: 1000px) {
+  html {
+    font-size: 125%;
+  }
+}
+
+body {
+  margin: 0;
+  padding-inline: 1em;
+  font-family: Lora, Georgia, serif;
+  line-height: 1.4;
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+#page {
+  max-width: 40em;
+  margin-inline: auto;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: var(--link-color);
+}
+
+figure {
+  outline: 1px dashed var(--text-color);
+  margin: 0;
+  padding: 1em;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+nav {
+  margin-block: 3em;
+}
