@@ -69,3 +69,7 @@ video {
 nav {
   margin-block: 3em;
 }
+
+nav li {
+  margin-top: 0.6ch;
+}
