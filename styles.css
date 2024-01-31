@@ -54,7 +54,13 @@ figure {
   padding: 1em;
 }
 
-img {
+figcaption {
+  margin-top: 1ch;
+  font-size: 88%;
+}
+
+img,
+video {
   display: block;
   max-width: 100%;
   height: auto;

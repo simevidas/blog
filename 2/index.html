@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>24 seconds to view the product images on Amazon’s website</title>
+    <meta name="description" content="I’m interested in HTML, CSS, and making the web less annoying" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="alternate"
+      href="/feed.xml"
+      title="Šime’s blog feed"
+      type="application/atom+xml"
+    />
+  </head>
+  <body>
+    <div id="page">
+      <main>
+<h1>24 seconds to view the product images on Amazon’s website</h1>
+<p><time datetime="2024-01-31">January 31, 2024</time></p>
+<p>Earlier this month I finally retired my Motorola G4 that served me well for testing web performance for over half a decade. The new device that I got is the Nokia C02 (<a href="https://www.gsmarena.com/nokia_c02-12136.php">view specs</a>). In terms of CPU and RAM, it’s the lowest-end Android smartphone I could find that was released by a mainstream brand in 2023. According to <a href="https://browserbench.org">Speedometer</a>, it’s about 25% slower than the 2016 Motorola G4. Yes, slower.</p>
+<p>Did I go too low? I don’t think so. Around 4 billion people browse the web using smartphones. If we were to sort these 4 billion smartphones by web performance, the Nokia C02 would probably not be in the bottom 5%, and maybe not even in the bottom 10% (I’m just guessing). So when a website is too slow on my Nokia, then it’s too slow for probably at least <strong>a few hundred million people</strong>, and that’s unacceptable.</p>
+<p>When I saw a post on my Mastodon timeline about the poor performance of Amazon’s website, and the dangers of not testing on real devices, I had to see for myself. I loaded the product page for some vase on my Nokia, and at first everything seemed more or less fine. The page rendered within a couple of seconds, and there was no major scroll jank. The experience was acceptable.</p>
+<p>I was about to end the test and conclude that it’s not as bad as the performance profile made it out to be, but then I tried to view the other product images. The first two images rendered immediately, but none of the other images had loaded. So I waited. And waited. I imagined that some JavaScript error might have caused the loading spinner to get stuck. I put the phone down and returned to my laptop because modern technology has ruined my attention span, and I can’t just gaze at a loading screen for more than 10 seconds without any progress. Another 10 seconds later, the image finally appeared.</p>
+<figure>
+  <video controls src="/media/amazon-24-seconds.mp4"></video>
+  <figcaption>Tested in Chrome on a 34 Mbps connection.</figcaption>
+</figure>
+<p>I repeated the test a few more times across different product pages to confirm that it wasn’t just a fluke. Overall, it takes about 24 seconds from navigation start to product image render. That’s on the Nokia C02. I also performed a site performance test with an “emulated Motorola G4” on WebPageTest. The <a href="https://www.webpagetest.org/result/240130_AiDcSF_EAG/">test result</a> shows about 10 seconds of scripting on the main thread, and the first 30 seconds are riddled with long tasks. According to my browser’s devtools, a typical product page on Amazon’s website executes around 7 MB of JavaScript.</p>
+<p>While this is undoubtedly too much JavaScript (five times more than I would be comfortable with), users on low-end devices can still have a passable experience—at the expense of their device’s battery percentage—as long as they don’t have to wait too long for each individual event. But in this case, waiting 20+ seconds for the product images to load <em>is</em> too long.</p>
+<p>Since the first two product images load immediately, it could be that Amazon decided to eagerly load only those two images because they determined that by the time the user swipes to the third image, most if not all of the JavaScript has already been executed anyway, so there’s only a small delay. Amazon’s test devices must be more powerful than my Nokia. Amazon should consider eagerly loading <em>all</em> product images. After all, viewing these images is one of the first things the user does after checking the price, isn’t it? If that’s not possible, Amazon could probably reduce the image loading delay by prioritizing the JavaScript that is responsible for loading the images, and making sure that the images can load faster if needed, without being delayed by other resources.</p>
+<p>But those are just my surface-level thoughts. I don’t have the whole picture. I’m sure Amazon knows how to fix this issue, assuming that it can be fixed without a major overhaul of the code. The only question is whether they consider this issue to be important enough to be prioritized. Meanwhile, I’ll stick to my admittedly simplistic rule: If it’s too slow on my Nokia, it’s unacceptable.</p>
+
+<p><a href="https://mastodon.social/@simevidas/">Reply on Mastodon</a></p></main>
+      <nav>
+        <h2>All blog posts</h2>
+        <p>
+          <a href="/feed.xml">RSS feed</a>
+          <!-- (included in
+          <a href="https://github.com/simevidas/web-dev-feeds">web-dev-feeds</a
+          >) -->
+        </p>
+        <ol reversed>
+          
+          <li>
+            <a href="/2/">24 seconds to view the product images on Amazon’s website</a> - Jan 31
+          </li>
+          
+          <li>
+            <a href="/1/">Websites shouldn’t reject passwords generated by browsers</a> - Jan 28
+          </li>
+          
+        </ol>
+      </nav>
+    </div>
+    <script>
+      // remove trailing slashes from page URLs
+      if (location.href.slice(-1) === '/') {
+        history.replaceState(null, '', location.href.slice(0, -1));
+      }
+    </script>
+  </body>
+</html>
