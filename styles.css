@@ -66,6 +66,26 @@ video {
   height: auto;
 }
 
+code {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
+  font-size: 87.5%;
+}
+
+blockquote {
+  border-left: 0.5ch solid lightgray;
+  margin-left: 1ch;
+  padding-left: 1ch;
+}
+
+dt {
+  font-weight: bold;
+}
+
+dd + dt {
+  margin-top: 1ch;
+}
+
 nav {
   margin-block: 3em;
 }
