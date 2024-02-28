@@ -26,7 +26,7 @@
 &lt;dd&gt;shows user-agent styles in the CSS Rules pane in Firefox devtools (why are user-agent styles hidden by default?)&lt;/dd&gt;
 &lt;dt&gt;browser.chrome.guess_favicon = false&lt;/dt&gt;
 &lt;dd&gt;stops Firefox from attempting to load the website’s favicon from the default location when an icon is &lt;i&gt;not&lt;/i&gt; declared in the HTML document (I use this config to get rid of the distracting ”favicon not found” errors in the devtools console)&lt;/dd&gt;
-&lt;dt&gt;browser.urlbar.resultMenu.keyboardAccessible = false&lt;/dt&gt;
+&lt;dt&gt;browser.urlbar.resultMenu.keyboard&amp;shy;Accessible = false&lt;/dt&gt;
 &lt;dd&gt;removes menu buttons from the individual items in the URL bar dropdown list (those buttons make tabbing through the items slower)&lt;/dd&gt;
 &lt;h2&gt;2. Mozilla cannot decrypt my data on their servers&lt;/h2&gt;
 &lt;p&gt;All the major browsers have a feature for syncing the user’s browsing data across devices (Firefox Sync, Chrome Sync, Apple iCloud, and so on). The user’s data is stored on the browser vendor’s servers, and this data is of course encrypted. But can the browser vendor decrypt this data? Google can. Apple claims that they can’t, but they have disclosed user data to law enforcement in the past, so I don’t trust them. Mozilla says that they can’t, and I trust them.&lt;/p&gt;
