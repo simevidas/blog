@@ -21,7 +21,7 @@ body {
   padding-inline: 1em;
   font-family: Lora, Georgia, serif;
   font-size: 110%;
-  line-height: 1.4;
+  line-height: 1.5;
   color: var(--text-color);
   background-color: var(--background-color);
 }
