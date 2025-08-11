@@ -45,14 +45,14 @@ a {
 }
 
 figure {
-  outline: 1px dashed var(--text-color);
   margin: 0;
-  padding: 1em;
+  padding: 0;
 }
 
 figcaption {
-  margin-top: 1ch;
-  font-size: 88%;
+  font-size: smaller;
+  text-align: center;
+  margin-top: 0.5ch;
 }
 
 img,
