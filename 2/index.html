@@ -9,6 +9,15 @@
     <meta name="generator" content="Eleventy" />
     <link rel="stylesheet" href="/styles.css" />
     <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/nnfx-light.min.css"
+    />
+    <link
+      rel="stylesheet"
+      media="screen and (prefers-color-scheme: dark)"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/nnfx-dark.min.css"
+    />
+    <link
       rel="alternate"
       href="/feed.xml"
       title="Šime’s blog feed"
@@ -65,6 +74,10 @@
       if (location.href.slice(-1) === '/') {
         history.replaceState(null, '', location.href.slice(0, -1));
       }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      hljs.highlightAll();
     </script>
   </body>
 </html>
