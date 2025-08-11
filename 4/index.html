@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How to make horizontal scrolling work well in Android browsers</title>
+    <meta name="description" content="I’m interested in HTML, CSS, and making the web less annoying" />
+    <meta name="generator" content="Eleventy" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- <link
+      rel="alternate"
+      href="/feed.xml"
+      title="Šime’s blog feed"
+      type="application/atom+xml"
+    /> -->
+  </head>
+  <body>
+    <div id="page">
+      <main>
+<h1>How to make horizontal scrolling work well in Android browsers</h1>
+<p><time datetime="2025-08-11">August 11, 2025</time></p>
+<p>I recently created a small web page that scrolls horizontally instead of vertically. Making it work well in web browsers on Android required a custom solution, which I’ll explain in this blog post.</p>
+<p>But first, this is how the page looks:</p>
+<figure>
+  <img src="/media/switch2-android.jpg" width="2293" height="1468" alt="Android smartphone shows web page in web browser. The web pages extends do the right of the smartphone.">
+  <figcaption>Try it out at <a href="https://switch2.šime.eu/">switch2.šime.eu</a></figcaption>
+</figure>
+<p>While creating this page, I wanted to achieve the following behavior:</p>
+<ol>
+<li>The content should be full height (as tall as the viewport).</li>
+<li>The page should scroll horizontally.</li>
+<li>The page should <em>not</em> scroll vertically.</li>
+</ol>
+<p>Additionally, all three requirements should continue to be met when the user rotates their phone sideways and Android switches to landscape mode. In other words, I want the same user experience regardless of whether the user holds their phone upright or sideways.</p>
+<p>Seems simple enough. Let’s try to make it happen, step by step. (Note: This blog post is longer than it needs to be for educational purposes. If you just want my suggested solution, skip to step 4.)</p>
+<h2>Step 1: Have the page be very wide</h2>
+<p>To test how Android browsers handle pages that are very wide, we’ll use a <code>&lt;div&gt;</code> with the following dimensions:</p>
+<pre><code class="language-css">#content {
+  width: 3000px;
+  height: 95svh;
+}
+</code></pre>
+<details>
+  <summary>Why <code>95svh</code> instead of <code>100svh</code>?</summary>
+<p>In desktop browsers with classic scrollbars, the horizontal scrollbar at the bottom of the viewport takes up some vertical space (around <code>17px</code>), so an element that is <code>100svh</code> tall no longer fits into the viewport, which causes an undesired vertical scrollbar on the viewport — it’s an entire different problem. I wrote a <a href="https://www.smashingmagazine.com/2023/12/new-css-viewport-units-not-solve-classic-scrollbar-problem/">detailed article</a> about that topic. For my simple page, <code>95svh</code> will be just fine.</p>
+</details>
+<p>Of course, the page needs to have the viewport meta tag:</p>
+<!-- prettier-ignore -->
+<pre><code class="language-html">&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width&quot;&gt;
+</code></pre>
+<p><strong><a href="https://output.jsbin.com/tofopuq/quiet">Test page 1</a></strong></p>
+<p>In Android browsers, the test page is zoomed out on page load. The content is not full height. On my phone, the initial zoom level is around 25%.</p>
+<!-- Results:
+
+- in Safari/iOS, when rotating the phone sideways, after having pinch-zoomed in and out, the page is zoomed in for some reason; could be a bug; the issue does not happen in Firefox
+
+- in Chrome/Firefox on Android, the page is initially very zoomed out (20–25%, by my rough estimate) -->
+<ol>
+<li>full height ❌</li>
+<li>scrolls horizontally ✅</li>
+<li>doesn’t scroll vertically ✅</li>
+</ol>
+<p>It looks like Android browsers detect that the page is too wide and reduce the zoom level to show more of the page content on page load. This is a good default behavior, I guess, but our page is designed to be full height and horizontally scrollable, so we don’t want this behavior. Luckily, it can be disabled.</p>
+<h2>Step 2: Force the initial zoom level to be 100%</h2>
+<p>Adding <code>initial-scale=1</code> to the viewport meta tag tells browsers not to zoom out the page on page load, regardless of how wide it is.</p>
+<p><strong><a href="https://output.jsbin.com/tuyahep/quiet">Test page 2</a></strong></p>
+<p>Android browsers show this test page at the default zoom level (100%). The content is full height. But now there’s an additional vertical scrollbar. If the user scrolls down, the content scrolls completely out of view. This is not only useless (there is nothing below the content), but it’s a bad user experience because the user may accidentally swipe up while trying to swipe left or right, or they may instinctively start scrolling down after the page loads and be confused about all the empty space below the content.</p>
+<ol>
+<li>full height ✅</li>
+<li>scrolls horizontally ✅</li>
+<li>doesn’t scroll vertically ❌</li>
+</ol>
+<details>
+  <summary>Why do Android browsers add this vertical scrollbar? I have a theory.</summary>
+<p>The user can zoom out (via pinch gestures) until the entire page, in this case the <code>3000px</code>-wide <code>&lt;div&gt;</code>, is visible in the viewport. The <code>&lt;div&gt;</code> is rendered at the top of the viewport, and there is white space beneath it. This viewport is the layout viewport. The width of this viewport is <code>3000px</code> (based on the page content), and its aspect ratio is the same as the aspect ratio of the visual viewport. Let’s say this aspect ratio is 3:5. Then the height of the layout viewport is <code>5000px</code>. When the browser first loads the page, it determines the dimensions of the layout viewport based on the page content and the aspect ratio of the visual viewport: the layout viewport becomes <code>3000px</code> wide and <code>5000px</code> tall. Then the browser zooms in to 100% because the page sets <code>initial-scale=1</code>. Now the visual viewport, whose dimensions are around <code>300px</code> by <code>500px</code>, is smaller than the layout viewport (whose dimensions don’t change), and that’s why the browser provides both horizontal and vertical scrollbars: to allow the user to freely move the visual viewport within the layout viewport in both directions. This still doesn’t explain why there is no vertical scrollbar on test page 1 (at least not initially). My guess is that when the browser can freely set the initial zoom level to whatever it thinks is the optimal value (test page 1), it can decide to not show the vertical scrollbar if it thinks that it’s not necessary, but when the page forcefully sets the initial zoom level via <code>initial-scale</code> (test page 2), the browser thinks, “The page might be doing something weird with the zoom. I better provide all the scrollbars for my user, just in case.”</p>
+</details>
+<p>It’s difficult to make a web page work the way you want if you don’t understand why browsers behave the way they do. The vertical scrollbar seems to be related to the zoom level. When the page is fully zoomed out, the vertical scrollbar disappears. The vertical scrollbar is present so that the user can zoom out. Is that it? So then maybe if we disable zooming out, the vertical scrollbar will go away.</p>
+<h2>Step 3: Disable zooming out below 100%</h2>
+<p>In addition to <code>initial-scale</code>, there also exists <code>minimum-scale</code>. If both are set to the same value (<code>1</code>), the initial zoom level (100%) also becomes the minimum zoom level. The user can zoom in to 200% and zoom back out to 100%, but they can’t zoom out to 50%.</p>
+<p><strong><a href="https://output.jsbin.com/hirelew/quiet">Test page 3</a></strong></p>
+<p>Android browsers indeed stop showing a vertical scrollbar by default. However, if the user force-enables zoom in the browser’s settings (“Zoom on all web sites” in Firefox, “Force enable zoom” in Chrome), the vertical scrollbar reappears.</p>
+<p>The mentioned accessibility option exists because some websites didn’t want to allow users to zoom in (above 100%). This option doesn’t really have anything to do with zooming out below 100%. The whole concept of zooming out below 100% doesn’t really exist in Android browsers in practice. Normal websites that scroll vertically cannot be zoomed out below 100%. It’s unfortunate that an accessibility option that exists for an unrelated reason gets in the way of implementing a web page that scrolls horizontally.</p>
+<ol>
+<li>full height ✅</li>
+<li>scrolls horizontally ✅</li>
+<li>doesn’t scroll vertically ✅ (default) ❌ (when zoom is force-enabled)</li>
+</ol>
+<p>I don’t know how to reliably achieve the desired behavior with the default viewport scroller. Maybe there is a way, but I haven’t found it (so far). Luckily, the viewport scroller isn’t strictly necessary. We can let an element on the page do the scrolling instead.</p>
+<h2>Step 4: Put the content in a custom scroll container</h2>
+<p>We wrap the page content in a <code>&lt;div&gt;</code> and let that <code>&lt;div&gt;</code> act as our horizontal scroll container. By containing the scroll functionality within an element that itself does not overflow the viewport, we completely avoid the issue of the enlarged layout viewport and the resulting vertical scrollbar on the viewport scroller.</p>
+<pre><code class="language-css">#scroller {
+  height: 100svh;
+  overflow-x: auto;
+}
+</code></pre>
+<details>
+  <summary><code>100svh</code>? Didn’t you say <code>95svh</code>?</summary>
+<p>In this case, the <code>#scroller</code> element is the scroll container that scrolls the content. The horizontal scrollbar belongs to this element and is contained within it. This element needs to have the full viewport height (<code>100svh</code>) so that the scrollbar appears at the very bottom edge of the viewport, as if it was the scrollbar of the viewport itself. The <code>#content</code> element inside the <code>#scroller</code> element still has a height of <code>95svh</code>, for the same reason as before.</p>
+</details>
+<p><strong><a href="https://output.jsbin.com/siduvev/quiet">Test page 4</a></strong></p>
+<p>As far as I can tell, this approach works flawlessly. The user can zoom in normally. When the phone is rotated sideways, the content remains full height. We don’t even need the <code>initial-scale=1</code> and <code>minimum-scale=1</code> properties in the viewport meta tag anymore.</p>
+<ol>
+<li>full height ✅</li>
+<li>scrolls horizontally ✅</li>
+<li>doesn’t scroll vertically ✅</li>
+</ol>
+
+<p><a href="https://mastodon.social/@simevidas/">Reply on Mastodon</a></p></main>
+      <nav>
+        <h2>All blog posts</h2>
+        <!-- <p>
+          <a href="/feed.xml">RSS feed</a>
+        </p> -->
+        <ol reversed>
+          
+          <li>
+            <a href="/4/">How to make horizontal scrolling work well in Android browsers</a> - Aug 11, ’25
+          </li>
+          
+          <li>
+            <a href="/3/">Why I use Firefox</a> - Feb 26, ’24
+          </li>
+          
+          <li>
+            <a href="/2/">24 seconds to view the product images on Amazon’s website</a> - Jan 31, ’24
+          </li>
+          
+          <li>
+            <a href="/1/">Websites shouldn’t reject passwords generated by browsers</a> - Jan 28, ’24
+          </li>
+          
+        </ol>
+      </nav>
+    </div>
+    <script>
+      // remove trailing slashes from page URLs
+      if (location.href.slice(-1) === '/') {
+        history.replaceState(null, '', location.href.slice(0, -1));
+      }
+    </script>
+  </body>
+</html>
