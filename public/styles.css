@@ -69,7 +69,7 @@ pre {
 code {
   font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
     'Liberation Mono', monospace;
-  font-size: 87.5%;
+  font-size: smaller;
 }
 
 blockquote {
@@ -80,6 +80,10 @@ blockquote {
 
 dt {
   font-weight: bold;
+}
+
+dt code {
+  font-size: inherit;
 }
 
 dd + dt {
