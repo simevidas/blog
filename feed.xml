@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://šime.eu/">
+  <title>Šime’s blog</title>
+  <subtitle>I’m interested in HTML, CSS, and making the web less annoying</subtitle>
+  <link href="https://xn--ime-zza.eu/feed.xml" rel="self"/>
+  <link href="https://šime.eu/"/>
+  <updated>2025-08-11T00:00:00Z</updated>
+  <id>https://šime.eu/</id>
+  <author>
+    <name>Šime Vidas</name>
+  </author>
+  <entry>
+    <title>How to make horizontal scrolling work well in Android browsers</title>
+    <link href="https://xn--ime-zza.eu/4/"/>
+    <updated>2025-08-11T00:00:00Z</updated>
+    <id>https://xn--ime-zza.eu/4/</id>
+    <content xml:lang="en" type="html">&lt;p&gt;I recently created a small web page that scrolls horizontally instead of vertically. Making it work well in web browsers on Android required a custom solution, which I’ll explain in this blog post.&lt;/p&gt;
+&lt;p&gt;But first, this is how the page looks:&lt;/p&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;https://xn--ime-zza.eu/media/switch2-android.jpg&quot; width=&quot;2293&quot; height=&quot;1468&quot; alt=&quot;Android smartphone shows web page in web browser. The web pages extends do the right of the smartphone.&quot; /&gt;
+  &lt;figcaption&gt;Try it out at &lt;a href=&quot;https://switch2.xn--ime-zza.eu/&quot;&gt;switch2.šime.eu&lt;/a&gt;&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;p&gt;While creating this page, I wanted to achieve the following behavior:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The content should be full height (as tall as the viewport).&lt;/li&gt;
+&lt;li&gt;The page should scroll horizontally.&lt;/li&gt;
+&lt;li&gt;The page should &lt;em&gt;not&lt;/em&gt; scroll vertically.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Additionally, all three requirements should continue to be met when the user rotates their phone sideways and Android switches to landscape mode. In other words, I want the same user experience regardless of whether the user holds their phone upright or sideways.&lt;/p&gt;
+&lt;p&gt;Seems simple enough. Let’s try to make it happen, step by step. (Note: This blog post is longer than it needs to be for educational purposes. If you just want my suggested solution, skip to step 4.)&lt;/p&gt;
+&lt;h2&gt;Step 1: Have the page be very wide&lt;/h2&gt;
+&lt;p&gt;To test how Android browsers handle pages that are very wide, we’ll use a &lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt; with the following dimensions:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-css&quot;&gt;#content {
+  width: 3000px;
+  height: 95svh;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;details&gt;
+  &lt;summary&gt;Why &lt;code&gt;95svh&lt;/code&gt; instead of &lt;code&gt;100svh&lt;/code&gt;?&lt;/summary&gt;
+&lt;p&gt;In desktop browsers with classic scrollbars, the horizontal scrollbar at the bottom of the viewport takes up some vertical space (around &lt;code&gt;17px&lt;/code&gt;), so an element that is &lt;code&gt;100svh&lt;/code&gt; tall no longer fits into the viewport, which causes an undesired vertical scrollbar on the viewport — it’s an entire different problem. I wrote a &lt;a href=&quot;https://www.smashingmagazine.com/2023/12/new-css-viewport-units-not-solve-classic-scrollbar-problem/&quot;&gt;detailed article&lt;/a&gt; about that topic. For my simple page, &lt;code&gt;95svh&lt;/code&gt; will be just fine.&lt;/p&gt;
+&lt;/details&gt;
+&lt;p&gt;Of course, the page needs to have the viewport meta tag:&lt;/p&gt;
+&lt;!-- prettier-ignore --&gt;
+&lt;pre&gt;&lt;code class=&quot;language-html&quot;&gt;&amp;lt;meta name=&amp;quot;viewport&amp;quot; content=&amp;quot;width=device-width&amp;quot;&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&quot;https://output.jsbin.com/tofopuq/quiet&quot;&gt;Test page 1&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In Android browsers, the test page is zoomed out on page load. The content is not full height. On my phone, the initial zoom level is around 25%.&lt;/p&gt;
+&lt;!-- Results:
+
+- in Safari/iOS, when rotating the phone sideways, after having pinch-zoomed in and out, the page is zoomed in for some reason; could be a bug; the issue does not happen in Firefox
+
+- in Chrome/Firefox on Android, the page is initially very zoomed out (20–25%, by my rough estimate) --&gt;
+&lt;ol&gt;
+&lt;li&gt;full height ❌&lt;/li&gt;
+&lt;li&gt;scrolls horizontally ✅&lt;/li&gt;
+&lt;li&gt;doesn’t scroll vertically ✅&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;It looks like Android browsers detect that the page is too wide and reduce the zoom level to show more of the page content on page load. This is a good default behavior, I guess, but our page is designed to be full height and horizontally scrollable, so we don’t want this behavior. Luckily, it can be disabled.&lt;/p&gt;
+&lt;h2&gt;Step 2: Force the initial zoom level to be 100%&lt;/h2&gt;
+&lt;p&gt;Adding &lt;code&gt;initial-scale=1&lt;/code&gt; to the viewport meta tag tells browsers not to zoom out the page on page load, regardless of how wide it is.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&quot;https://output.jsbin.com/tuyahep/quiet&quot;&gt;Test page 2&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Android browsers show this test page at the default zoom level (100%). The content is full height. But now there’s an additional vertical scrollbar. If the user scrolls down, the content scrolls completely out of view. This is not only useless (there is nothing below the content), but it’s a bad user experience because the user may accidentally swipe up while trying to swipe left or right, or they may instinctively start scrolling down after the page loads and be confused about all the empty space below the content.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;full height ✅&lt;/li&gt;
+&lt;li&gt;scrolls horizontally ✅&lt;/li&gt;
+&lt;li&gt;doesn’t scroll vertically ❌&lt;/li&gt;
+&lt;/ol&gt;
+&lt;details&gt;
+  &lt;summary&gt;Why do Android browsers add this vertical scrollbar? I have a theory.&lt;/summary&gt;
+&lt;p&gt;The user can zoom out (via pinch gestures) until the entire page, in this case the &lt;code&gt;3000px&lt;/code&gt;-wide &lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt;, is visible in the viewport. The &lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt; is rendered at the top of the viewport, and there is white space beneath it. This viewport is the layout viewport. The width of this viewport is &lt;code&gt;3000px&lt;/code&gt; (based on the page content), and its aspect ratio is the same as the aspect ratio of the visual viewport. Let’s say this aspect ratio is 3:5. Then the height of the layout viewport is &lt;code&gt;5000px&lt;/code&gt;. When the browser first loads the page, it determines the dimensions of the layout viewport based on the page content and the aspect ratio of the visual viewport: the layout viewport becomes &lt;code&gt;3000px&lt;/code&gt; wide and &lt;code&gt;5000px&lt;/code&gt; tall. Then the browser zooms in to 100% because the page sets &lt;code&gt;initial-scale=1&lt;/code&gt;. Now the visual viewport, whose dimensions are around &lt;code&gt;300px&lt;/code&gt; by &lt;code&gt;500px&lt;/code&gt;, is smaller than the layout viewport (whose dimensions don’t change), and that’s why the browser provides both horizontal and vertical scrollbars: to allow the user to freely move the visual viewport within the layout viewport in both directions. This still doesn’t explain why there is no vertical scrollbar on test page 1 (at least not initially). My guess is that when the browser can freely set the initial zoom level to whatever it thinks is the optimal value (test page 1), it can decide to not show the vertical scrollbar if it thinks that it’s not necessary, but when the page forcefully sets the initial zoom level via &lt;code&gt;initial-scale&lt;/code&gt; (test page 2), the browser thinks, “The page might be doing something weird with the zoom. I better provide all the scrollbars for my user, just in case.”&lt;/p&gt;
+&lt;/details&gt;
+&lt;p&gt;It’s difficult to make a web page work the way you want if you don’t understand why browsers behave the way they do. The vertical scrollbar seems to be related to the zoom level. When the page is fully zoomed out, the vertical scrollbar disappears. The vertical scrollbar is present so that the user can zoom out. Is that it? So then maybe if we disable zooming out, the vertical scrollbar will go away.&lt;/p&gt;
+&lt;h2&gt;Step 3: Disable zooming out below 100%&lt;/h2&gt;
+&lt;p&gt;In addition to &lt;code&gt;initial-scale&lt;/code&gt;, there also exists &lt;code&gt;minimum-scale&lt;/code&gt;. If both are set to the same value (&lt;code&gt;1&lt;/code&gt;), the initial zoom level (100%) also becomes the minimum zoom level. The user can zoom in to 200% and zoom back out to 100%, but they can’t zoom out to 50%.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&quot;https://output.jsbin.com/hirelew/quiet&quot;&gt;Test page 3&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Android browsers indeed stop showing a vertical scrollbar by default. However, if the user force-enables zoom in the browser’s settings (“Zoom on all web sites” in Firefox, “Force enable zoom” in Chrome), the vertical scrollbar reappears.&lt;/p&gt;
+&lt;p&gt;The mentioned accessibility option exists because some websites didn’t want to allow users to zoom in (above 100%). This option doesn’t really have anything to do with zooming out below 100%. The whole concept of zooming out below 100% doesn’t really exist in Android browsers in practice. Normal websites that scroll vertically cannot be zoomed out below 100%. It’s unfortunate that an accessibility option that exists for an unrelated reason gets in the way of implementing a web page that scrolls horizontally.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;full height ✅&lt;/li&gt;
+&lt;li&gt;scrolls horizontally ✅&lt;/li&gt;
+&lt;li&gt;doesn’t scroll vertically ✅ (default) ❌ (when zoom is force-enabled)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I don’t know how to reliably achieve the desired behavior with the default viewport scroller. Maybe there is a way, but I haven’t found it (so far). Luckily, the viewport scroller isn’t strictly necessary. We can let an element on the page do the scrolling instead.&lt;/p&gt;
+&lt;h2&gt;Step 4: Put the content in a custom scroll container&lt;/h2&gt;
+&lt;p&gt;We wrap the page content in a &lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt; and let that &lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt; act as our horizontal scroll container. By containing the scroll functionality within an element that itself does not overflow the viewport, we completely avoid the issue of the enlarged layout viewport and the resulting vertical scrollbar on the viewport scroller.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-css&quot;&gt;#scroller {
+  height: 100svh;
+  overflow-x: auto;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;details&gt;
+  &lt;summary&gt;&lt;code&gt;100svh&lt;/code&gt;? Didn’t you say &lt;code&gt;95svh&lt;/code&gt;?&lt;/summary&gt;
+&lt;p&gt;In this case, the &lt;code&gt;#scroller&lt;/code&gt; element is the scroll container that scrolls the content. The horizontal scrollbar belongs to this element and is contained within it. This element needs to have the full viewport height (&lt;code&gt;100svh&lt;/code&gt;) so that the scrollbar appears at the very bottom edge of the viewport, as if it was the scrollbar of the viewport itself. The &lt;code&gt;#content&lt;/code&gt; element inside the &lt;code&gt;#scroller&lt;/code&gt; element still has a height of &lt;code&gt;95svh&lt;/code&gt;, for the same reason as before.&lt;/p&gt;
+&lt;/details&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&quot;https://output.jsbin.com/siduvev/quiet&quot;&gt;Test page 4&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;As far as I can tell, this approach works flawlessly. The user can zoom in normally. When the phone is rotated sideways, the content remains full height. We don’t even need the &lt;code&gt;initial-scale=1&lt;/code&gt; and &lt;code&gt;minimum-scale=1&lt;/code&gt; properties in the viewport meta tag anymore.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;full height ✅&lt;/li&gt;
+&lt;li&gt;scrolls horizontally ✅&lt;/li&gt;
+&lt;li&gt;doesn’t scroll vertically ✅&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Why I use Firefox</title>
+    <link href="https://xn--ime-zza.eu/3/"/>
+    <updated>2024-02-26T00:00:00Z</updated>
+    <id>https://xn--ime-zza.eu/3/</id>
+    <content xml:lang="en" type="html">&lt;p&gt;Questions like “Which browser should I use?” regularly come up on the &lt;a href=&quot;https://www.reddit.com/r/browsers/&quot;&gt;r/browsers subreddit&lt;/a&gt;. I sometimes respond to these posts, but my quick replies usually only contain one or two points. To be honest, until recently I wasn’t even sure myself why I use Firefox. Of course it’s a pretty good browser, but that doesn’t explain why I’ve stubbornly stayed loyal to Firefox for more than a decade. After giving it a bit more thought, I came up with the following reasons.&lt;/p&gt;
+&lt;h2&gt;1. The &lt;em&gt;about:config&lt;/em&gt; page&lt;/h2&gt;
+&lt;p&gt;In Firefox, there is an internal &lt;em&gt;about:config&lt;/em&gt; page with thousands (tens of thousands?) of individual configs that can be freely edited by the user. If you don’t like a particular UI element or behavior in Firefox, there’s a good chance that you can change it with a config. The &lt;em&gt;about:config&lt;/em&gt; page is also used to individually enable experimental web platform features (without requiring a browser restart like in Chrome).&lt;/p&gt;
+&lt;p&gt;Here are some of the configs that I’ve edited or added:&lt;/p&gt;
+&lt;dt&gt;devtools.toolbox.zoomValue = 1.2&lt;/dt&gt;
+&lt;dd&gt;increases the default text size in Firefox devtools to 120%&lt;/dd&gt;
+&lt;dt&gt;browser.tabs.closeWindowWithLastTab = false&lt;/dt&gt;
+&lt;dd&gt;prevents the entire browser window from closing when the user closes the last tab (I find this behavior annoying)&lt;/dd&gt;
+&lt;dt&gt;devtools.inspector.showUserAgentStyles = true&lt;/dt&gt;
+&lt;dd&gt;shows user-agent styles in the CSS Rules pane in Firefox devtools (why are user-agent styles hidden by default?)&lt;/dd&gt;
+&lt;dt&gt;browser.chrome.guess_favicon = false&lt;/dt&gt;
+&lt;dd&gt;stops Firefox from attempting to load the website’s favicon from the default location when an icon is &lt;i&gt;not&lt;/i&gt; declared in the HTML document (I use this config to get rid of the distracting ”favicon not found” errors in the devtools console)&lt;/dd&gt;
+&lt;dt&gt;browser.urlbar.resultMenu.keyboard&amp;shy;Accessible = false&lt;/dt&gt;
+&lt;dd&gt;removes menu buttons from the individual items in the URL bar dropdown list (those buttons make tabbing through the items slower)&lt;/dd&gt;
+&lt;h2&gt;2. Mozilla cannot decrypt my data on their servers&lt;/h2&gt;
+&lt;p&gt;All the major browsers have a feature for syncing the user’s browsing data across devices (Firefox Sync, Chrome Sync, Apple iCloud, and so on). The user’s data is stored on the browser vendor’s servers, and this data is of course encrypted. But can the browser vendor decrypt this data? Google can. Apple claims that they can’t, but they have disclosed user data to law enforcement in the past, so I don’t trust them. Mozilla says that they can’t, and I trust them.&lt;/p&gt;
+&lt;p&gt;It seems that Mozilla goes out of their way to make absolutely sure that they can’t access the synced browsing data of Firefox users. The encryption is strong enough that with current technology it would take trillions of years to break into this data, so it’s pretty safe. However, if I somehow managed to lose all my devices where I’ve activated Firefox Sync, my browsing data on Mozilla’s servers would be lost forever; there would be no way of recovering it. Still, I like the idea of using a browser from a company that does not &lt;em&gt;want&lt;/em&gt; to access my data on their own servers. I feel like this is how it should be.&lt;/p&gt;
+&lt;h2&gt;3. Translating web pages is also completely private&lt;/h2&gt;
+&lt;p&gt;Firefox Translations is a relatively new feature that allows users to translate web pages to a different language (from a small set of supported languages) directly in the browser, without sending any data to any servers. This feature is based on machine learning and neural networks.&lt;/p&gt;
+&lt;p&gt;This is another example of Mozilla going the extra mile to protect the user’s privacy.&lt;/p&gt;
+&lt;h2&gt;4. Mozilla develops their own browser engine&lt;/h2&gt;
+&lt;p&gt;Firefox uses Mozilla’s Gecko browser engine. No other major browser uses Gecko. The web is my favorite platform, and since a diversity of browser engines is good for the web*, I want to support Gecko. By using Firefox and reporting Firefox and web compat bugs, I’m doing my part.&lt;/p&gt;
+&lt;p&gt;*Allow me to quote &lt;a href=&quot;https://www.chromium.org/blink/developer-faq/#hold-up-isnt-more-browsers-sharing-webkit-better-for-compatibility&quot;&gt;Google’s F.A.Q.&lt;/a&gt; from 2013 when they forked WebKit:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;h3&gt;Hold up, isn&#39;t more browsers sharing WebKit better for compatibility?&lt;/h3&gt;
+&lt;p&gt;It&#39;s important to remember that WebKit is already not a homogenous target for developers. For example, features like WebGL and IndexedDB are only supported in some WebKit-based browsers. Understanding WebKit for Developers helps explain the details, like why &lt;code&gt;&amp;lt;video&amp;gt;&lt;/code&gt;, fonts and 3D transforms implementations vary across WebKit browsers.&lt;/p&gt;
+&lt;p&gt;Today Firefox uses the Gecko engine, which isn’t based on WebKit, yet the two have a high level of compatibility. We’re adopting a similar approach to Mozilla by having a distinct yet compatible open-source engine. We will also continue to have open bug tracking and implementation status so you can see and contribute to what we’re working on at any time.&lt;/p&gt;
+&lt;p&gt;From a short-term perspective, monocultures seem good for developer productivity. &lt;mark&gt;From the long-term perspective, however, monocultures inevitably lead to stagnation. It is our firm belief that more options in rendering engines will lead to more innovation and a healthier web ecosystem.&lt;/mark&gt;&lt;/p&gt;
+&lt;h3&gt;How does this affect web standards?&lt;/h3&gt;
+&lt;p&gt;Bringing a new browser engine into the world increases diversity. Though that in itself isn&#39;t our goal, it has the beneficial effect of ensuring that multiple interoperable implementations of accepted standards exist. &lt;mark&gt;Each engine will approach the same problem from a different direction, meaning that web developers can be more confident in the performance and security characteristics of the end result. It also makes it less likely that one implementation&#39;s quirks become de facto standards, which is good for the open web at large.&lt;/mark&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;I couldn’t have said it better. We currently have three major browser engines—and a couple of smaller ones in development—and of those three, Gecko is the only one that may be at risk. I’m not sure what Gecko’s &lt;a href=&quot;https://en.wikipedia.org/wiki/Conservation_status&quot;&gt;conservation status&lt;/a&gt; would be if it were a real animal (probably “Conservation Dependent”), but I don&#39;t plan on giving up on it anytime soon.&lt;/p&gt;
+&lt;h2&gt;5. The best support for extensions on Android&lt;/h2&gt;
+&lt;p&gt;The web has unfortunately become slower and more annoying over the past decade. Extensions that block ads and other types of problematic content have become necessary to have a normal web browsing experience. On Android, Firefox has by far the best support for browser extensions. This includes uBlock Origin (the best ad-blocker) and extensions for adding user styles and user scripts to websites. I actively use all of these extensions (uBlock Origin, &lt;a href=&quot;https://add0n.com/stylus.html&quot;&gt;Stylus&lt;/a&gt;, Tampermonkey) on desktop to tweak websites to my liking. It is awesome that Firefox users on Android can do the same.&lt;/p&gt;
+&lt;h2&gt;6. A great picture-in-picture player&lt;/h2&gt;
+&lt;p&gt;I should probably finally mention an actual feature in Firefox that a regular user might find useful. I don’t really use Firefox for its general features, but if there’s one such feature that I really like, it’s the native picture-in-picture video player in desktop Firefox, which is superb. It has everything that one could ask for. It can be quickly opened via an overlay button that is shown when hovering any video. It can be resized and positioned anywhere on the screen. It has the full controls, including pause, mute, and the seek bar for skipping to any point in the video. I use it all the time.&lt;/p&gt;
+&lt;h2&gt;In summary&lt;/h2&gt;
+&lt;p&gt;I trust Mozilla more than I trust Google, Apple, Microsoft, or any other company that makes web browsers. This trust is based on the fact that Mozilla chooses the highest level of user privacy when developing services such as Firefox Sync, Firefox Translate, and others. A web browser is an integral part of a person’s online life, so it makes sense to choose a browser from a company that one trusts the most.&lt;/p&gt;
+&lt;p&gt;In addition to that, Firefox offers the highest level of customization, whether it’s through browser extensions or internal configs. This is important to me because I prefer websites over native apps.&lt;/p&gt;
+&lt;p&gt;Any great feature, such as the picture-in-picture player, is just the cherry on top. I understand that for most people it’s probably the other way around. They care about features more than they care about privacy and customization. That is fine. There is no wrong answer. Everyone should use the browser that serves them best.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>24 seconds to view the product images on Amazon’s website</title>
+    <link href="https://xn--ime-zza.eu/2/"/>
+    <updated>2024-01-31T00:00:00Z</updated>
+    <id>https://xn--ime-zza.eu/2/</id>
+    <content xml:lang="en" type="html">&lt;p&gt;Earlier this month I finally retired my Motorola G4 that served me well for testing web performance for over half a decade. The new device that I got is the Nokia C02 (&lt;a href=&quot;https://www.gsmarena.com/nokia_c02-12136.php&quot;&gt;view specs&lt;/a&gt;). In terms of CPU and RAM, it’s the lowest-end Android smartphone I could find that was released by a mainstream brand in 2023. According to &lt;a href=&quot;https://browserbench.org/&quot;&gt;Speedometer&lt;/a&gt;, it’s about 25% slower than the 2016 Motorola G4. Yes, slower.&lt;/p&gt;
+&lt;p&gt;Did I go too low? I don’t think so. Around 4 billion people browse the web using smartphones. If we were to sort these 4 billion smartphones by web performance, the Nokia C02 would probably not be in the bottom 5%, and maybe not even in the bottom 10% (I’m just guessing). So when a website is too slow on my Nokia, then it’s too slow for probably at least &lt;strong&gt;a few hundred million people&lt;/strong&gt;, and that’s unacceptable.&lt;/p&gt;
+&lt;p&gt;When I saw a post on my Mastodon timeline about the poor performance of Amazon’s website, and the dangers of not testing on real devices, I had to see for myself. I loaded the product page for some vase on my Nokia, and at first everything seemed more or less fine. The page rendered within a couple of seconds, and there was no major scroll jank. The experience was acceptable.&lt;/p&gt;
+&lt;p&gt;I was about to end the test and conclude that it’s not as bad as the performance profile made it out to be, but then I tried to view the other product images. The first two images rendered immediately, but none of the other images had loaded. So I waited. And waited. I imagined that some JavaScript error might have caused the loading spinner to get stuck. I put the phone down and returned to my laptop because modern technology has ruined my attention span, and I can’t just gaze at a loading screen for more than 10 seconds without any progress. Another 10 seconds later, the image finally appeared.&lt;/p&gt;
+&lt;figure&gt;
+  &lt;video controls=&quot;&quot; src=&quot;https://xn--ime-zza.eu/media/amazon-24-seconds.mp4&quot;&gt;&lt;/video&gt;
+  &lt;figcaption&gt;Tested in Chrome on a 34 Mbps connection.&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;p&gt;I repeated the test a few more times across different product pages to confirm that it wasn’t just a fluke. Overall, it takes about 24 seconds from navigation start to product image render. That’s on the Nokia C02. I also performed a site performance test with an “emulated Motorola G4” on WebPageTest. The &lt;a href=&quot;https://www.webpagetest.org/result/240130_AiDcSF_EAG/&quot;&gt;test result&lt;/a&gt; shows about 10 seconds of scripting on the main thread, and the first 30 seconds are riddled with long tasks. According to my browser’s devtools, a typical product page on Amazon’s website executes around 7 MB of JavaScript.&lt;/p&gt;
+&lt;p&gt;While this is undoubtedly too much JavaScript (five times more than I would be comfortable with), users on low-end devices can still have a passable experience—at the expense of their device’s battery percentage—as long as they don’t have to wait too long for each individual event. But in this case, waiting 20+ seconds for the product images to load &lt;em&gt;is&lt;/em&gt; too long.&lt;/p&gt;
+&lt;p&gt;Since the first two product images load immediately, it could be that Amazon decided to eagerly load only those two images because they determined that by the time the user swipes to the third image, most if not all of the JavaScript has already been executed anyway, so there’s only a small delay. Amazon’s test devices must be more powerful than my Nokia. Amazon should consider eagerly loading &lt;em&gt;all&lt;/em&gt; product images. After all, viewing these images is one of the first things the user does after checking the price, isn’t it? If that’s not possible, Amazon could probably reduce the image loading delay by prioritizing the JavaScript that is responsible for loading the images, and making sure that the images can load faster if needed, without being delayed by other resources.&lt;/p&gt;
+&lt;p&gt;But those are just my surface-level thoughts. I don’t have the whole picture. I’m sure Amazon knows how to fix this issue, assuming that it can be fixed without a major overhaul of the code. The only question is whether they consider this issue to be important enough to be prioritized. In the meantime, I’ll stick to my admittedly simplistic rule: If it’s too slow on my Nokia, it’s unacceptable.&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Websites shouldn’t reject passwords generated by browsers</title>
+    <link href="https://xn--ime-zza.eu/1/"/>
+    <updated>2024-01-28T00:00:00Z</updated>
+    <id>https://xn--ime-zza.eu/1/</id>
+    <content xml:lang="en" type="html">&lt;p&gt;When I decided to get the domain šime.eu for my blog, I had to find a domain name registrar that supports .eu domains. My first choice was &lt;a href=&quot;https://www.netim.com/&quot;&gt;Netim&lt;/a&gt; (I forgot why). I added my order for šime.eu to the cart, and the next step was to create an account. My browser, Firefox, offered to generate a secure password, which I of course accepted, but when I tried to submit the form, the website showed the error message “The password provided is invalid”.&lt;/p&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;https://xn--ime-zza.eu/media/firefox-password-invalid.jpg&quot; width=&quot;1772&quot; height=&quot;997&quot; alt=&quot;Netim. Create your account. Your password should have at least one symbol. The password provided is invalid.&quot; /&gt;
+&lt;/figure&gt;
+&lt;p&gt;I was confused. According to the tooltip, the password meets all the requirements. It even says that it’s a strong password. So what’s the problem? I didn’t have the patience to figure out the reason, but it turns out that when Netim says “at least one symbol”, they don’t mean any symbol; they mean one of the 13 supported symbols that are listed in the tooltip. I’ll leave it to you to figure out which symbol in the password generated by Firefox is not supported. What a fun game, huh?&lt;/p&gt;
+&lt;p&gt;I &lt;a href=&quot;https://twitter.com/simevidas/status/1749548143975248010&quot;&gt;reported&lt;/a&gt; this issue to Netim, and they said that they asked their dev team to add more characters to the list. They should probably test their account creation form in every major browser, since different browsers use different algorithms for generating secure passwords. If I were an expert in this field, I could give you better advice on exactly which symbols to support (all of them?), but one thing seems clear to me: Websites should not reject passwords generated by browsers.&lt;/p&gt;
+</content>
+  </entry>
+</feed>
