@@ -25,6 +25,7 @@ body {
   line-height: 1.5;
   color: var(--text-color);
   background-color: var(--background-color);
+  overflow-wrap: break-word;
 }
 
 #page {
@@ -44,14 +45,14 @@ a {
 }
 
 figure {
-  outline: 1px dashed var(--text-color);
   margin: 0;
-  padding: 1em;
+  padding: 0;
 }
 
 figcaption {
-  margin-top: 1ch;
-  font-size: 88%;
+  font-size: smaller;
+  text-align: center;
+  margin-top: 0.5ch;
 }
 
 img,
@@ -68,17 +69,21 @@ pre {
 code {
   font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
     'Liberation Mono', monospace;
-  font-size: 87.5%;
+  font-size: smaller;
 }
 
 blockquote {
-  border-left: 0.5ch solid lightgray;
+  border-left: 0.5ch solid var(--text-color);
   margin-left: 1ch;
   padding-left: 1ch;
 }
 
 dt {
   font-weight: bold;
+}
+
+dt code {
+  font-size: inherit;
 }
 
 dd + dt {
