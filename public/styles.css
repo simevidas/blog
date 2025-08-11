@@ -73,7 +73,7 @@ code {
 }
 
 blockquote {
-  border-left: 0.5ch solid lightgray;
+  border-left: 0.5ch solid var(--text-color);
   margin-left: 1ch;
   padding-left: 1ch;
 }
