@@ -68,6 +68,10 @@ video {
   height: auto;
 }
 
+pre {
+  overflow-x: auto;
+}
+
 code {
   font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas,
     'Liberation Mono', monospace;
