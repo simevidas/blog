@@ -3,7 +3,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      // remove trailing slashes from page URLs
+      if (location.href.slice(-1) === '/') {
+        history.replaceState(null, '', location.href.slice(0, -1));
+      }
+    </script>
+    <meta name="viewport" content="width=device-width" />
     <title>24 seconds to view the product images on Amazon’s website</title>
     <meta name="description" content="I’m interested in HTML, CSS, and making the web less annoying" />
     <meta name="generator" content="Eleventy" />
@@ -70,18 +76,14 @@
         </ol>
       </nav>
     </div>
-    <script>
-      // remove trailing slashes from page URLs
-      if (location.href.slice(-1) === '/') {
-        history.replaceState(null, '', location.href.slice(0, -1));
-      }
-    </script>
     <script
       defer
       src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
     ></script>
     <script>
-      hljs.highlightAll();
+      document.addEventListener('DOMContentLoaded', () => {
+        hljs.highlightAll();
+      });
     </script>
   </body>
 </html>
