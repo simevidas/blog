@@ -3,6 +3,12 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // remove trailing slashes from page URLs
+      if (location.href.slice(-1) === '/') {
+        history.replaceState(null, '', location.href.slice(0, -1));
+      }
+    </script>
     <meta name="viewport" content="width=device-width" />
     <title>{{ title | default: metadata.title }}</title>
     <meta name="description" content="{{ metadata.subtitle }}" />
@@ -42,12 +48,6 @@
         </ol>
       </nav>
     </div>
-    <script>
-      // remove trailing slashes from page URLs
-      if (location.href.slice(-1) === '/') {
-        history.replaceState(null, '', location.href.slice(0, -1));
-      }
-    </script>
     <script
       defer
       src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
