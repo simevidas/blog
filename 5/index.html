@@ -45,14 +45,14 @@
 <li>The dialog cannot be scrolled at all, so the close button is unreachable</li>
 </ol>
 <figure>
-  <img src="/media/zcentar.jpg" width="1918" height="1698" alt="Two smartphones showing the same website zcentar.hr side-by-side">
+  <img src="/media/zcentar.jpg" width="1918" height="1698" alt="Two smartphones showing the same website zcentar.hr side-by-side. The smartphone on the left is smaller, so the dialog does not fully fit on the screen.">
   <figcaption>iPhone SE on the left, a typical Android on the right</figcaption>
 </figure>
 <p>I opened this website on my iPhone SE because I needed to check the closing times of a bookstore in Z Centar. I could not get past the dialog in my preferred browser (Firefox). That website was effectively down for me. Signing up to the newsletter just to get rid of the dialog does not help either, in case you were wondering. I was at home, so I could access the website from one of my other devices, but if I were out, I would have to think of another way to access the information that I needed, and I’m not sure if I would have had the patience to do that. (I later remembered that Safari has a “Hide distracting items” feature that could have helped me get rid of the dialog.)</p>
 <p>It’s worth mentioning that the website would not have had this problem if it used the <a href="https://developer.mozilla.org/docs/Web/HTML/Reference/Elements/dialog">standard <code>&lt;dialog&gt;</code> element</a>, which provides built-in scrolling functionality if its contents are taller than the viewport. So to the devs of Z Centar, if you need a hotfix, replace the <code>&lt;div&gt;</code> with <code>&lt;dialog&gt;</code> and use the <code>showModal</code> method to show the dialog.</p>
 <p>Device modes in browser devtools have an “iPhone SE” preset, but those tools have a critical flaw (IMO). They set the viewport height to the full screen height of the iPhone SE, but on a real iPhone SE, the actual viewport height is of course smaller because the iOS status bar and the browser’s address bar take up some space. So if you test your dialog or similar content in the devtools preset and it fits, it might not fit when I open your website on my iPhone SE. For that reason, you might want to manually check the height of the content and make sure that it’s not taller than 539 pixels.</p>
 
-<p><a href="https://mastodon.social/@simevidas/">Reply on Mastodon</a></p></main>
+<p><a href="https://mastodon.social/@simevidas/116076574517869527">Reply on Mastodon</a></p></main>
       <nav>
         <h2>All blog posts</h2>
         <p>
