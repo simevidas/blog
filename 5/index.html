@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // remove trailing slashes from page URLs
+      if (location.href.slice(-1) === '/') {
+        history.replaceState(null, '', location.href.slice(0, -1));
+      }
+    </script>
+    <meta name="viewport" content="width=device-width" />
+    <title>The dialogs on your website should probably not be taller than 539px</title>
+    <meta name="description" content="I’m interested in HTML, CSS, and making the web less annoying" />
+    <meta name="generator" content="Eleventy" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="me" href="https://mastodon.social/@simevidas" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/nnfx-light.min.css"
+    />
+    <link
+      rel="stylesheet"
+      media="screen and (prefers-color-scheme: dark)"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/nnfx-dark.min.css"
+    />
+    <link
+      rel="alternate"
+      href="/feed.xml"
+      title="Šime’s blog feed"
+      type="application/atom+xml"
+    />
+  </head>
+  <body>
+    <div id="page">
+      <main>
+<h1>The dialogs on your website should probably not be taller than 539px</h1>
+<p><time datetime="2026-02-15">February 15, 2026</time></p>
+<p>And the reason for that is the iPhone SE, specifically its 2nd (2020) and 3rd (2022) generations. These two iPhone models, which are still actively supported by Apple and run the latest version of iOS, have probably the smallest viewport height of all smartphones in use today: <code>549px</code> in Safari, and only <code>539px</code> in Firefox (due to Firefox’s taller address bar).</p>
+<p>Dialogs (dialog boxes) on websites that are taller than that won’t fit into the viewport on iPhone SE. In the worst case, the user may not be able to use the website at all. Exactly that happened to <a href="https://zcentar.hr/">Z Centar</a> (a new shopping center in Zagreb, Croatia):</p>
+<ol>
+<li>The website shows a newsletter sign-up dialog on page load</li>
+<li>The dialog’s close button is located in the upper right corner of the dialog</li>
+<li>The close button is not visible in the viewport because the dialog is too tall</li>
+<li>The dialog cannot be scrolled at all, so the close button is unreachable</li>
+</ol>
+<figure>
+  <img src="/media/zcentar.jpg" width="1918" height="1698" alt="Two smartphones showing the same website zcentar.hr side-by-side">
+  <figcaption>iPhone SE on the left, a typical Android on the right</figcaption>
+</figure>
+<p>I opened this website on my iPhone SE because I needed to check the closing times of a bookstore in Z Centar. I could not get past the dialog in my preferred browser (Firefox). That website was effectively down for me. Signing up to the newsletter just to get rid of the dialog does not help either, in case you were wondering. I was at home, so I could access the website from one of my other devices, but if I were out, I would have to think of another way to access the information that I needed, and I’m not sure if I would have had the patience to do that. (I later remembered that Safari has a “Hide distracting items” feature that could have helped me get rid of the dialog.)</p>
+<p>It’s worth mentioning that the website would not have had this problem if it used the <a href="https://developer.mozilla.org/docs/Web/HTML/Reference/Elements/dialog">standard <code>&lt;dialog&gt;</code> element</a>, which provides built-in scrolling functionality if its contents are taller than the viewport. So to the devs of Z Centar, if you need a hotfix, replace the <code>&lt;div&gt;</code> with <code>&lt;dialog&gt;</code> and use the <code>showModal</code> method to show the dialog.</p>
+<p>Device modes in browser devtools have an “iPhone SE” preset, but those tools have a critical flaw (IMO). They set the viewport height to the full screen height of the iPhone SE, but on a real iPhone SE, the actual viewport height is of course smaller because the iOS status bar and the browser’s address bar take up some space. So if you test your dialog or similar content in the devtools preset and it fits, it might not fit when I open your website on my iPhone SE. For that reason, you might want to manually check the height of the content and make sure that it’s not taller than 539 pixels.</p>
+
+<p><a href="https://mastodon.social/@simevidas/">Reply on Mastodon</a></p></main>
+      <nav>
+        <h2>All blog posts</h2>
+        <p>
+          <a href="/feed.xml">RSS feed</a>
+        </p>
+        <ol reversed>
+          
+          <li>
+            <a href="/5/">The dialogs on your website should probably not be taller than 539px</a>
+          </li>
+          
+          <li>
+            <a href="/4/">How to make horizontal scrolling work well in Android browsers</a>
+          </li>
+          
+          <li>
+            <a href="/3/">Why I use Firefox</a>
+          </li>
+          
+          <li>
+            <a href="/2/">24 seconds to view the product images on Amazon’s website</a>
+          </li>
+          
+          <li>
+            <a href="/1/">Websites shouldn’t reject passwords generated by browsers</a>
+          </li>
+          
+        </ol>
+      </nav>
+    </div>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
+    ></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        hljs.highlightAll();
+      });
+    </script>
+  </body>
+</html>

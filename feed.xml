@@ -4,11 +4,33 @@
   <subtitle>I’m interested in HTML, CSS, and making the web less annoying</subtitle>
   <link href="https://xn--ime-zza.eu/feed.xml" rel="self"/>
   <link href="https://šime.eu/"/>
-  <updated>2025-08-11T00:00:00Z</updated>
+  <updated>2026-02-15T00:00:00Z</updated>
   <id>https://šime.eu/</id>
   <author>
     <name>Šime Vidas</name>
   </author>
+  <entry>
+    <title>The dialogs on your website should probably not be taller than 539px</title>
+    <link href="https://xn--ime-zza.eu/5/"/>
+    <updated>2026-02-15T00:00:00Z</updated>
+    <id>https://xn--ime-zza.eu/5/</id>
+    <content xml:lang="en" type="html">&lt;p&gt;And the reason for that is the iPhone SE, specifically its 2nd (2020) and 3rd (2022) generations. These two iPhone models, which are still actively supported by Apple and run the latest version of iOS, have probably the smallest viewport height of all smartphones in use today: &lt;code&gt;549px&lt;/code&gt; in Safari, and only &lt;code&gt;539px&lt;/code&gt; in Firefox (due to Firefox’s taller address bar).&lt;/p&gt;
+&lt;p&gt;Dialogs (dialog boxes) on websites that are taller than that won’t fit into the viewport on iPhone SE. In the worst case, the user may not be able to use the website at all. Exactly that happened to &lt;a href=&quot;https://zcentar.hr/&quot;&gt;Z Centar&lt;/a&gt; (a new shopping center in Zagreb, Croatia):&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The website shows a newsletter sign-up dialog on page load&lt;/li&gt;
+&lt;li&gt;The dialog’s close button is located in the upper right corner of the dialog&lt;/li&gt;
+&lt;li&gt;The close button is not visible in the viewport because the dialog is too tall&lt;/li&gt;
+&lt;li&gt;The dialog cannot be scrolled at all, so the close button is unreachable&lt;/li&gt;
+&lt;/ol&gt;
+&lt;figure&gt;
+  &lt;img src=&quot;https://xn--ime-zza.eu/media/zcentar.jpg&quot; width=&quot;1918&quot; height=&quot;1698&quot; alt=&quot;Two smartphones showing the same website zcentar.hr side-by-side&quot; /&gt;
+  &lt;figcaption&gt;iPhone SE on the left, a typical Android on the right&lt;/figcaption&gt;
+&lt;/figure&gt;
+&lt;p&gt;I opened this website on my iPhone SE because I needed to check the closing times of a bookstore in Z Centar. I could not get past the dialog in my preferred browser (Firefox). That website was effectively down for me. Signing up to the newsletter just to get rid of the dialog does not help either, in case you were wondering. I was at home, so I could access the website from one of my other devices, but if I were out, I would have to think of another way to access the information that I needed, and I’m not sure if I would have had the patience to do that. (I later remembered that Safari has a “Hide distracting items” feature that could have helped me get rid of the dialog.)&lt;/p&gt;
+&lt;p&gt;It’s worth mentioning that the website would not have had this problem if it used the &lt;a href=&quot;https://developer.mozilla.org/docs/Web/HTML/Reference/Elements/dialog&quot;&gt;standard &lt;code&gt;&amp;lt;dialog&amp;gt;&lt;/code&gt; element&lt;/a&gt;, which provides built-in scrolling functionality if its contents are taller than the viewport. So to the devs of Z Centar, if you need a hotfix, replace the &lt;code&gt;&amp;lt;div&amp;gt;&lt;/code&gt; with &lt;code&gt;&amp;lt;dialog&amp;gt;&lt;/code&gt; and use the &lt;code&gt;showModal&lt;/code&gt; method to show the dialog.&lt;/p&gt;
+&lt;p&gt;Device modes in browser devtools have an “iPhone SE” preset, but those tools have a critical flaw (IMO). They set the viewport height to the full screen height of the iPhone SE, but on a real iPhone SE, the actual viewport height is of course smaller because the iOS status bar and the browser’s address bar take up some space. So if you test your dialog or similar content in the devtools preset and it fits, it might not fit when I open your website on my iPhone SE. For that reason, you might want to manually check the height of the content and make sure that it’s not taller than 539 pixels.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>How to make horizontal scrolling work well in Android browsers</title>
     <link href="https://xn--ime-zza.eu/4/"/>
